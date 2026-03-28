@@ -1,0 +1,37 @@
+#pragma once
+#include <iostream>
+#include "Vector4f.h"
+
+class Vector3f
+{
+public:
+    float x, y, z;
+    Vector3f(float x, float y, float z) : x(x), y(y), z(z) {}
+    Vector3f() = default;
+    Vector3f(const Vector4f& v4):x(v4.x),y(v4.y),z(v4.z){};
+    Vector3f operator+(const Vector3f &other) const;
+    Vector3f operator-(const Vector3f &other) const;
+    Vector3f operator * (float scalar) const;
+    Vector3f operator / (float scalar) const;
+    Vector3f& operator+=(const Vector3f& other);
+    Vector3f& operator*=(float scalar);
+    Vector3f& operator-=(const Vector3f& other);
+    Vector3f &operator/=(float scalar);
+
+    [[nodiscard]] Vector3f normalized() const;
+    [[nodiscard]] Vector3f cross(const Vector3f &other) const;
+    [[nodiscard]] float dot(const Vector3f &other) const;
+    [[nodiscard]] float length() const;
+    [[nodiscard]] static Vector3f& normalize(Vector3f& v);
+    friend std::ostream &operator<<(std::ostream &os, const Vector3f &v);
+};
+
+inline std::ostream &operator<<(std::ostream &os, const Vector3f &v)
+{
+    os << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+    return os;
+}
+inline Vector3f operator*(float scalar, const Vector3f &v)
+{
+    return v * scalar;
+}
