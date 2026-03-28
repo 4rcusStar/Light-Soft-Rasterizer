@@ -2,21 +2,19 @@
 // Created by ASUS on 2026/3/28.
 
 #include <iostream>
-#include <ostream>
-
+#include "Matrix4f.h"
 #include "Vector3f.hpp"
-
 int main()
 {
-    Vector3f vec1{0,1,1};
-    Vector3f vec2{4,5,6};
-    std::cout << vec1 << std::endl;
-    std::cout << vec1.length() << std::endl;
-    std::cout << vec1+vec2 << std::endl;
-    std::cout << vec1*2 << "," << 2*vec2 << std::endl;
-    std::cout << vec1/3<<std::endl;
-    std::cout << vec1.dot(vec2) << std::endl;
-    std::cout << vec1.cross(vec2) << std::endl;
-    std::cout << Vector3f::normalize(vec1) << std::endl;
-    std::cout << vec1 << std::endl;
+    Matrix4f mat4{
+        1,3,5,7,
+        2,3,5,8,
+        3,7,9,10,
+        2,3,3,3
+    };
+    mat4*=mat4;
+    for (int i{0};i<16;++i)
+    {
+        std::cout<<mat4.at(i)<<" ";
+    }
 }

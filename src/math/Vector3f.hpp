@@ -1,14 +1,12 @@
 #pragma once
 #include <iostream>
-#include "Vector4f.h"
-
+class Vector4f;
 class Vector3f
 {
 public:
     float x, y, z;
-    Vector3f(float x, float y, float z) : x(x), y(y), z(z) {}
-    Vector3f() = default;
-    Vector3f(const Vector4f& v4):x(v4.x),y(v4.y),z(v4.z){};
+    Vector3f(float x, float y, float z);
+    explicit Vector3f(const Vector4f& v4);
     Vector3f operator+(const Vector3f &other) const;
     Vector3f operator-(const Vector3f &other) const;
     Vector3f operator * (float scalar) const;
