@@ -6,6 +6,7 @@ class Vector3f
 public:
     float x, y, z;
     Vector3f(float x, float y, float z);
+    Vector3f(float xyz);
     explicit Vector3f(const Vector4f& v4);
     Vector3f operator+(const Vector3f &other) const;
     Vector3f operator-(const Vector3f &other) const;

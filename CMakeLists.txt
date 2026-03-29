@@ -9,11 +9,19 @@ include_directories(include)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(SoftRasterizer ${SOURCES}
-        src/math/main.cpp
         src/math/Vector4f.cpp
         src/math/Vector4f.h
         src/math/Matrix4f.cpp
-        src/math/Matrix4f.h)
+        src/math/Matrix4f.h
+        src/core/main.cpp
+        src/math/Color.h
+        src/Rasterizer/Vertex.h
+        src/math/Vector2f.cpp
+        src/math/Vector2f.h
+        src/Rasterizer/Fragment.h
+        src/Rasterizer/Renderer.cpp
+        src/Rasterizer/Renderer.h
+        src/Rasterizer/FrameBuffer.h)
 
 if(MSVC)
     target_compile_options(SoftRasterizer PRIVATE /W4)

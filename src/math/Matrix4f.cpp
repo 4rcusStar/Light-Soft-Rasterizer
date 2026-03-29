@@ -1,7 +1,3 @@
-//
-// Created by ASUS on 2026/3/28.
-//
-
 #include "Matrix4f.h"
 Matrix4f  Matrix4f::operator+(const Matrix4f& other) const
 {

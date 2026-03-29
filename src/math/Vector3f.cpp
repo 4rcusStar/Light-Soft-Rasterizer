@@ -1,7 +1,10 @@
 #include "Vector3f.hpp"
 #include "Vector4f.h"
 #include <cmath>
-Vector3f::Vector3f(float x, float y, float z) : x(x), y(y), z(z) {};
+Vector3f::Vector3f(float x, float y, float z) : x(x), y(y), z(z) {}
+Vector3f::Vector3f(float xyz):Vector3f(xyz,xyz,xyz)
+{
+};
 Vector3f::Vector3f(const Vector4f &v4):x(v4.x),y(v4.y),z(v4.z){};
 
 Vector3f Vector3f::operator+(const Vector3f &other) const

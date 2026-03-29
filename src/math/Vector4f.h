@@ -7,6 +7,7 @@ public:
     float x, y, z, w;
     Vector4f(float x, float y, float z,float w);
     Vector4f(const Vector3f& v3,float w);
+    Vector4f(float xyzw);
     Vector4f operator+(const Vector4f &other) const;
     Vector4f operator-(const Vector4f &other) const;
     Vector4f operator * (float scalar) const;
