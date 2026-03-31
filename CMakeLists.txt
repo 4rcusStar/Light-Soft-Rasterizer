@@ -21,7 +21,9 @@ add_executable(SoftRasterizer ${SOURCES}
         src/Rasterizer/Fragment.h
         src/Rasterizer/Renderer.cpp
         src/Rasterizer/Renderer.h
-        src/Rasterizer/FrameBuffer.h)
+        src/Rasterizer/FrameBuffer.h
+        src/Rasterizer/Triangle.cpp
+        src/Rasterizer/Triangle.h)
 
 if(MSVC)
     target_compile_options(SoftRasterizer PRIVATE /W4)
