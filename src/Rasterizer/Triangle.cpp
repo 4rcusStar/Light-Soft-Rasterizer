@@ -4,11 +4,14 @@
 
 #include "Triangle.h"
 
+#include <array>
+#include <cmath>
+
 Triangle::Triangle(Vertex v1, Vertex v2, Vertex v3):v1(v1),v2(v2),v3(v3){};
 Triangle::Triangle(Vector3f vec1, Vector3f vec2, Vector3f vec3):v1(Vertex(vec1)),v2(Vertex(vec2)),v3(Vertex(vec3)){}
-bool Triangle::isInside(size_t x, size_t y) const
+bool Triangle::isInside(float x, float y) const
 {
-    return Triangle::isInside({static_cast<float>(x),static_cast<float>(y)});
+    return isInside(Vector2f{x,y});
 };
 bool Triangle::isInside(Vector2f coord) const
 {
@@ -16,5 +19,20 @@ bool Triangle::isInside(Vector2f coord) const
     float b{(coord-v1.screenPosition).cross(v2.screenPosition-v1.screenPosition)};
     float c{(coord-v2.screenPosition).cross(v3.screenPosition-v2.screenPosition)};
     return (a>=0&&b>=0&&c>=0)||(a<=0&&b<=0&&c<=0);
+}
+
+///
+///计算三角形在屏幕空间中的包围盒
+std::array<float, 4> Triangle::getBoundingBox() const
+{
+    float minXf{std::min(std::min(v1.screenPosition.x, v2.screenPosition.x),v3.screenPosition.x)};
+    float minYf{std::min(std::min(v1.screenPosition.y, v2.screenPosition.y),v3.screenPosition.y)};
+    float maxXf{std::max(std::max(v1.screenPosition.x, v2.screenPosition.x),v3.screenPosition.x)};
+    float maxYf{std::max(std::max(v1.screenPosition.y, v2.screenPosition.y),v3.screenPosition.y)};
+    float minX = std::floor(minXf);
+    float minY = std::floor(minYf);
+    float maxX = std::ceil(maxXf);
+    float maxY = std::ceil(maxYf);
+    return std::array{minX,minY,maxX,maxY};
 }
 

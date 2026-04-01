@@ -9,25 +9,25 @@
 //
 int main()
 {
-    FrameBuffer frameBuffer(256,256);
+    FrameBuffer frameBuffer(1080,720);
     Renderer renderer(frameBuffer);
     Triangle triangle(Vector3f(1,0,0),Vector3f(0,1,0),Vector3f(-1,0,0));
-    triangle.v1.screenPosition={128,256};
-    triangle.v2.screenPosition={0,0};
-    triangle.v3.screenPosition={256,0};
-    for (size_t x = 0; x < 256; x++)
-    {
-        for (size_t y = 0; y < 256; y++)
-        {
-            if (triangle.isInside(x,y))
-            {
-                std::byte* pixel = frameBuffer.pixel(x,y);
-                pixel[0]=std::byte{static_cast<unsigned char>(x)};
-                pixel[1]=std::byte{static_cast<unsigned char>(y)};
-                pixel[2]=std::byte{0};
-            }
-        }
-    }
+    Triangle triangle2(triangle);
+    triangle.v1.screenPosition={0,0};
+    triangle.v2.screenPosition={0,10};
+    triangle.v3.screenPosition={10,0};
+    triangle.v1.depth=1.0f;
+    triangle.v2.depth=1.0f;
+    triangle.v3.depth=1.0f;
+    triangle2.v1.screenPosition={0,0};
+    triangle2.v2.screenPosition={44,55};
+    triangle2.v3.screenPosition={201,77};
+    triangle2.v1.depth=.5f;
+    triangle2.v2.depth=.5f;
+    triangle2.v3.depth=.5f;
+    renderer.addTriangle(triangle);
+    renderer.addTriangle(triangle2);
+    renderer.nextFrame();
     std::cout<<"success!"<<std::endl;
     renderer.draw();
 }
