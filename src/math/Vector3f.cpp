@@ -19,6 +19,12 @@ Vector3f Vector3f::operator*(float scalar) const
 {
     return {x * scalar, y * scalar, z * scalar};
 }
+
+Vector3f Vector3f::operator*(Vector3f other) const
+{
+    return {x * other.x, y * other.y, z * other.z};
+}
+
 Vector3f Vector3f::operator / (float scalar) const
 {
     return {x / scalar, y / scalar, z / scalar};

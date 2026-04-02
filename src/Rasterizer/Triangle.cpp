@@ -7,6 +7,8 @@
 #include <array>
 #include <cmath>
 
+#include "../math/MathUtils.h"
+
 Triangle::Triangle(Vertex v1, Vertex v2, Vertex v3):v1(v1),v2(v2),v3(v3){};
 Triangle::Triangle(Vector3f vec1, Vector3f vec2, Vector3f vec3):v1(Vertex(vec1)),v2(Vertex(vec2)),v3(Vertex(vec3)){}
 bool Triangle::isInside(float x, float y) const
@@ -35,4 +37,17 @@ std::array<float, 4> Triangle::getBoundingBox() const
     float maxY = std::ceil(maxYf);
     return std::array{minX,minY,maxX,maxY};
 }
+
+std::array<float, 3> Triangle::getBarycentric(const Vector2f coord) const
+{
+    std::array bary = MathUtils::getBarycentricCoord(coord, v1.screenPosition, v2.screenPosition, v3.screenPosition);
+    return {bary[0], bary[1], bary[2]};
+}
+std::array<float, 3> Triangle::getBarycentric(float x,float y) const
+{
+   return getBarycentric({x,y});
+}
+
+
+
 

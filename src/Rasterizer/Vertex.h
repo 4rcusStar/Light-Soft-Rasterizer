@@ -1,5 +1,4 @@
 #pragma once
-#include "../math/Color.h"
 #include "../math/Vector2f.h"
 #include "../math/Vector3f.hpp"
 #include "../math/Vector4f.h"
@@ -8,7 +7,7 @@ struct Vertex
 {
     Vector3f position;
     Vector3f normal;
-    Color color;
+    Vector3f color;
     Vector2f texCoord;
 
     Vector4f clipPosition{0,0,0,0};//裁剪空间坐标

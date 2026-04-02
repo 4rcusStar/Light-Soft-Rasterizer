@@ -14,7 +14,6 @@ add_executable(SoftRasterizer ${SOURCES}
         src/math/Matrix4f.cpp
         src/math/Matrix4f.h
         src/core/main.cpp
-        src/math/Color.h
         src/Rasterizer/Vertex.h
         src/math/Vector2f.cpp
         src/math/Vector2f.h

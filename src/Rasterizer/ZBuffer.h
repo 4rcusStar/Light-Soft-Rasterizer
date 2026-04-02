@@ -16,12 +16,8 @@ private:
 public:
     ZBuffer(size_t width, size_t height);
     void clear();
+    float& operator()(int x,int y);
 
-    /// 将屏幕上x,y坐标的像素深度设置为depth
-    /// @param x 屏幕x
-    /// @param y 屏幕y
-    /// @param depth 深度
-    void update(size_t x, size_t y,float depth);
 };
 
 

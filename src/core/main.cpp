@@ -6,25 +6,34 @@
 #include "../Rasterizer/Triangle.h"
 //
 // Created by ASUS on 2026/3/28.
-//
+#include "../math/MathUtils.h"
 int main()
 {
-    FrameBuffer frameBuffer(1080,720);
-    Renderer renderer(frameBuffer);
+    constexpr  size_t WIDTH {256};
+    constexpr  size_t HEIGHT {256};
+    FrameBuffer frameBuffer(WIDTH,HEIGHT);
+    ZBuffer zBuffer(WIDTH,HEIGHT);
+    Renderer renderer(frameBuffer,zBuffer);
+
     Triangle triangle(Vector3f(1,0,0),Vector3f(0,1,0),Vector3f(-1,0,0));
-    Triangle triangle2(triangle);
-    triangle.v1.screenPosition={0,0};
-    triangle.v2.screenPosition={0,10};
-    triangle.v3.screenPosition={10,0};
-    triangle.v1.depth=1.0f;
-    triangle.v2.depth=1.0f;
-    triangle.v3.depth=1.0f;
-    triangle2.v1.screenPosition={0,0};
-    triangle2.v2.screenPosition={44,55};
-    triangle2.v3.screenPosition={201,77};
-    triangle2.v1.depth=.5f;
-    triangle2.v2.depth=.5f;
-    triangle2.v3.depth=.5f;
+    triangle.v1.screenPosition ={0,256};
+    triangle.v2.screenPosition ={128,0};
+    triangle.v3.screenPosition ={256,256};
+    triangle.v1.color={255,0,0};
+    triangle.v2.color={0,255,0};
+    triangle.v3.color={0,0,255};
+    triangle.v1.depth=1;
+    triangle.v2.depth=0;
+    triangle.v3.depth=.5f;
+
+    Triangle triangle2(Vector3f(1,0,0),Vector3f(0,1,0),Vector3f(-1,0,0));
+    triangle2.v1.screenPosition ={0,256};
+    triangle2.v2.screenPosition ={128,0};
+    triangle2.v3.screenPosition ={256,256};
+    triangle2.v1.color=triangle2.v2.color=triangle2.v3.color={255,0,0};
+    triangle2.v1.depth =0;
+    triangle2.v2.depth =0.5f;
+    triangle2.v3.depth =0;
     renderer.addTriangle(triangle);
     renderer.addTriangle(triangle2);
     renderer.nextFrame();

@@ -3,6 +3,8 @@
 //
 #include "Renderer.h"
 
+#include <chrono>
+#include <cmath>
 #include <fstream>
 void Renderer::setModelMatrix(Matrix4f m){_modelMatrix = m;}
 void Renderer::setViewMatrix(Matrix4f v){_viewMatrix = v;}
@@ -35,9 +37,13 @@ void Renderer::clear()
 
 void Renderer::nextFrame()
 {
+    //清除缓存数据
+    _zBuffer.clear();
+    _framebuffer.clear();
     //外层遍历三角形
     for (auto& tri : _triangles)
     {
+        //获取AABB
         std::array boundingBox{tri.getBoundingBox()};
         int minY{static_cast<int>(boundingBox[1])};
         int minX{static_cast<int>(boundingBox[0])};
@@ -49,11 +55,19 @@ void Renderer::nextFrame()
             {
                 if (tri.isInside(.5f+x,y+.5f))
                 {
-                    //TODO:使用重心插值表示每个片元的深度。
+                    Vertex& v1 = tri.v1;
+                    Vertex& v2 = tri.v2;
+                    Vertex& v3 = tri.v3;
+                    auto [alpha,beta,gamma]= tri.getBarycentric(x+.5f,y+.5f);
+                    float depth{alpha*v1.depth+beta*v2.depth+gamma};
+                    if (depth>_zBuffer(x,y))
+                        continue;
+                    _zBuffer(x,y)=depth;
                     std::byte* pixel {_framebuffer.pixel(x,y)};
-                    pixel[0]=std::byte{255};
-                    pixel[1]=std::byte{0};
-                    pixel[2]=std::byte{0};
+                    Vector3f col{v1.color*alpha+v2.color*beta+v3.color*gamma};
+                    pixel[0]=static_cast<std::byte>(std::round(col.x));
+                    pixel[1]=static_cast<std::byte>(std::round(col.y));
+                    pixel[2]=static_cast<std::byte>(std::round(col.z));
                 }
             }
         }

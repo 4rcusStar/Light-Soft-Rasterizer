@@ -11,6 +11,11 @@ public:
     Vector3f operator+(const Vector3f &other) const;
     Vector3f operator-(const Vector3f &other) const;
     Vector3f operator * (float scalar) const;
+
+    /// 分量相乘
+    /// @param other
+    /// @return
+    Vector3f operator * (Vector3f other)const;
     Vector3f operator / (float scalar) const;
     Vector3f& operator+=(const Vector3f& other);
     Vector3f& operator*=(float scalar);

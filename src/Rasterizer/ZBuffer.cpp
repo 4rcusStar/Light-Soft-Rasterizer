@@ -10,10 +10,12 @@ ZBuffer::ZBuffer(size_t width, size_t height):_width(width),_height(height)
     std::fill(_data.begin(), _data.end(), _maxDepth);
 }
 
-void ZBuffer::update(size_t x, size_t y, float depth)
+
+float& ZBuffer::operator()(int x, int y)
 {
-    _data[y * _width + x] = depth;
+    return _data[y * _width + x];
 }
+
 void ZBuffer::clear()
 {
     std::fill(_data.begin(), _data.end(), _maxDepth);
