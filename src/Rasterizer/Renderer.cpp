@@ -6,6 +6,8 @@
 #include <chrono>
 #include <cmath>
 #include <fstream>
+
+#include "../math/MathUtils.h"
 void Renderer::setModelMatrix(Matrix4f m){_modelMatrix = m;}
 void Renderer::setViewMatrix(Matrix4f v){_viewMatrix = v;}
 void Renderer::setProjectionMatrix(Matrix4f p){_projectionMatrix = p;}
@@ -59,10 +61,14 @@ void Renderer::nextFrame()
                     Vertex& v2 = tri.v2;
                     Vertex& v3 = tri.v3;
                     auto [alpha,beta,gamma]= tri.getBarycentric(x+.5f,y+.5f);
-                    float depth{alpha*v1.depth+beta*v2.depth+gamma};
+                    //重心插值
+                    constexpr float eps{std::numeric_limits<float>::epsilon()};
+                    float inverseDepth{alpha/std::max(v1.depth,eps)+beta/std::max(v2.depth,eps)+gamma/std::max(v3.depth,eps)};
+                    float depth{1.f/std::max(inverseDepth,eps)};
                     if (depth>_zBuffer(x,y))
                         continue;
                     _zBuffer(x,y)=depth;
+                    //颜色插值
                     std::byte* pixel {_framebuffer.pixel(x,y)};
                     Vector3f col{v1.color*alpha+v2.color*beta+v3.color*gamma};
                     pixel[0]=static_cast<std::byte>(std::round(col.x));
@@ -73,3 +79,4 @@ void Renderer::nextFrame()
         }
     }
 }
+
