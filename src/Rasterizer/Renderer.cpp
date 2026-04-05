@@ -8,9 +8,32 @@
 #include <fstream>
 
 #include "../math/MathUtils.h"
-void Renderer::setModelMatrix(Matrix4f m){_modelMatrix = m;}
-void Renderer::setViewMatrix(Matrix4f v){_viewMatrix = v;}
-void Renderer::setProjectionMatrix(Matrix4f p){_projectionMatrix = p;}
+void Renderer::setModelMatrix()
+{
+    _modelMatrix=Matrix4f::Identity();
+}
+
+Matrix4f Renderer::getMvp() const
+{
+    return _camera.getProjectionMatrix()*_camera.getViewMatrix()*_modelMatrix;
+}
+
+
+void Renderer::vertexShader()
+{
+    for (auto&tri:_triangles)
+    {
+        for (int i{0};i<3;++i)
+        {
+            Vertex& v{tri[i]};
+            v.clipPosition=getMvp()*Vector4f{v.position,1};
+            float clipW{v.clipPosition.w};
+            v.ndcPosition = {v.clipPosition.x/clipW,v.clipPosition.y/clipW,v.clipPosition.z/clipW};
+            v.screenPosition = {(v.ndcPosition.x+1)*.5f*width,(v.ndcPosition.y+1)*.5f*height};
+            v.depth = -v.clipPosition.z;
+        }
+    }
+}
 
 void Renderer::addTriangle(const Triangle& tri)
 {
@@ -42,6 +65,7 @@ void Renderer::nextFrame()
     //清除缓存数据
     _zBuffer.clear();
     _framebuffer.clear();
+    vertexShader();
     //外层遍历三角形
     for (auto& tri : _triangles)
     {
@@ -51,9 +75,9 @@ void Renderer::nextFrame()
         int minX{static_cast<int>(boundingBox[0])};
         int maxX{static_cast<int>(boundingBox[2])};
         int maxY{static_cast<int>(boundingBox[3])};
-        for (int y = minY; y<=maxY;++y)
+        for (int y = std::max(minY,0); y<=std::min(maxY,static_cast<int>(height-1));++y)
         {
-            for (int x = minX; x<=maxX;++x)
+            for (int x = std::max(minX,0); x<=std::min(maxX,static_cast<int>(width-1));++x)
             {
                 if (tri.isInside(.5f+x,y+.5f))
                 {

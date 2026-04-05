@@ -9,33 +9,31 @@
 #include "../math/MathUtils.h"
 int main()
 {
-    constexpr  size_t WIDTH {256};
-    constexpr  size_t HEIGHT {256};
-    FrameBuffer frameBuffer(WIDTH,HEIGHT);
-    ZBuffer zBuffer(WIDTH,HEIGHT);
-    Renderer renderer(frameBuffer,zBuffer);
+    FrameBuffer frameBuffer{1080,720};
+    ZBuffer zBuffer{1080,720};
+    Camera camera;
+    camera.position={0,0,4};
+    Renderer renderer(frameBuffer,zBuffer,camera);
 
-    /*Triangle triangle(Vector3f(1,0,0),Vector3f(0,1,0),Vector3f(-1,0,0));
-    triangle.v1.screenPosition ={0,256};
-    triangle.v2.screenPosition ={128,0};
-    triangle.v3.screenPosition ={256,256};
-    triangle.v1.color={0,255,0};
-    triangle.v2.color={0,255,0};
-    triangle.v3.color={0,255,0};
-    triangle.v1.depth=.2f;
-    triangle.v2.depth=.3f;
-    triangle.v3.depth=.3F;*/
+    // 白色三角形
+    Triangle whiteTri;
+    whiteTri.v1.position = { -1.0f,  0.8f, -1.2f }; // 上左：极近
+    whiteTri.v2.position = {  10.0f,  0.8f, -2.8f }; // 上右：极远
+    whiteTri.v3.position = {  0.0f, -0.8f, -2.0f }; // 下中：中间
+    whiteTri.v1.color = {255,255,255};
+    whiteTri.v2.color = {255,255,255};
+    whiteTri.v3.color = {255,255,255};
+    renderer.addTriangle(whiteTri);
 
-    Triangle triangle2(Vector3f(1,0,0),Vector3f(0,1,0),Vector3f(-1,0,0));
-    triangle2.v1.screenPosition ={0,256};
-    triangle2.v2.screenPosition ={128,0};
-    triangle2.v3.screenPosition ={256,256};
-    triangle2.v1.color=triangle2.v2.color=triangle2.v3.color={255,255,255};
-    triangle2.v1.depth =.02;
-    triangle2.v2.depth =.5F;
-    triangle2.v3.depth =.1F;
-    //renderer.addTriangle(triangle);
-    renderer.addTriangle(triangle2);
+    // 彩色三角形
+    Triangle colorTri;
+    colorTri.v1.position = { -10.0f,  0.8f, -2.8f }; // 上左：极远
+    colorTri.v2.position = {  1.0f,  0.8f, -1.2f }; // 上右：极近
+    colorTri.v3.position = {  0.0f, -0.8f, -2.0f }; // 下中：中间
+    colorTri.v1.color = {255, 0, 0};
+    colorTri.v2.color = {0, 255, 0};
+    colorTri.v3.color = {0, 0, 255};
+    renderer.addTriangle(colorTri);
     renderer.nextFrame();
     std::cout<<"success!"<<std::endl;
     renderer.draw();

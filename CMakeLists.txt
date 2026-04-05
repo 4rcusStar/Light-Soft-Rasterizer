@@ -25,7 +25,9 @@ add_executable(SoftRasterizer ${SOURCES}
         src/Rasterizer/Triangle.h
         src/Rasterizer/ZBuffer.cpp
         src/Rasterizer/ZBuffer.h
-        src/math/MathUtils.h)
+        src/math/MathUtils.h
+        src/Rasterizer/Camera.cpp
+        src/Rasterizer/Camera.h)
 
 if(MSVC)
     target_compile_options(SoftRasterizer PRIVATE /W4)

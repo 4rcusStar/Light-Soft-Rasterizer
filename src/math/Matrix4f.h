@@ -23,6 +23,7 @@ public:
     Matrix4f operator+(const Matrix4f& other) const;
     Matrix4f operator-(const Matrix4f& other) const;
     Matrix4f operator*(const Matrix4f& other) const;
+    Vector4f operator*(const Vector4f& other) const;
     Matrix4f operator*(float scalar) const;
     Matrix4f& operator+=(const Matrix4f& other);
     Matrix4f& operator-=(const Matrix4f& other);
@@ -32,9 +33,20 @@ public:
     const float& operator() (int index) const;
     float& operator()(int m,int n);
     float& operator()(int index);
+    [[nodiscard]] static Matrix4f Identity();
+    [[nodiscard]] Matrix4f Inverse();
 
-    [[nodiscard]] float at(int index)const;
-    [[nodiscard]] float at(int x,int y)const;
+    /// 计算3阶行列式
+    /// @return
+    [[nodiscard]] static float determinant3(float a00,float a01,float a02,
+                                            float a10,float a11,float a12,
+                                            float a20,float a21,float a22);
+    /// 计算该矩阵行列式
+    /// @return
+    [[nodiscard]] float determinant() const;
+    void transpose();
+    [[nodiscard]]Matrix4f transposed() const;
+    static Matrix4f& transpose(Matrix4f& mat);
 };
 inline Matrix4f operator*(const float scalar,const Matrix4f& mat)
 {

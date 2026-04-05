@@ -8,8 +8,8 @@
 class FrameBuffer
 {
 private:
-    size_t _width;
-    size_t _height;
+    size_t _width{0};
+    size_t _height{0};
     std::vector<std::byte> _data;
     const size_t bytesPerPixel{4};
 public:

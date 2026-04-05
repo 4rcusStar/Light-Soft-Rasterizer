@@ -10,6 +10,7 @@ struct Triangle
     Vertex v1, v2, v3;
     Triangle(Vertex v1, Vertex v2, Vertex v3);
     Triangle(Vector3f vec1,Vector3f vec2,Vector3f vec3);
+    Triangle()=default;
     [[nodiscard]] bool isInside(float x,float y) const;
     [[nodiscard]] bool isInside(Vector2f coord) const;
 
@@ -22,5 +23,25 @@ struct Triangle
     /// @return array{alpha,beta,gamma}
     [[nodiscard]] std::array<float, 3> getBarycentric(Vector2f coord) const;
     [[nodiscard]] std::array<float, 3> getBarycentric(float x,float y) const;
+    [[nodiscard]] const Vertex& operator[](int index)const
+    {
+        switch (index)
+        {
+            case 0:return v1;
+            case 1:return v2;
+            case 2:return v3;
+            default:throw "Invalid index";
+        }
+    }
+    [[nodiscard]] Vertex& operator[](int index)
+    {
+        switch (index)
+        {
+            case 0:return v1;
+            case 1:return v2;
+            case 2:return v3;
+            default:throw "Invalid index";
+        }
+    }
 };
 #endif //SOFTRASTERIZER_TRIANGLE_H

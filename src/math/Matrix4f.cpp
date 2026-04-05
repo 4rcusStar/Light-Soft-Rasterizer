@@ -47,6 +47,17 @@ Matrix4f Matrix4f::operator*(const Matrix4f& other) const
 
     return result;
 }
+
+Vector4f Matrix4f::operator*(const Vector4f &other) const
+{
+    Vector4f res{0};
+    res.x = (*this)(0,0)*other.x+ (*this)(0,1)*other.y+ (*this)(0,2)*other.z+(*this)(0,3)*other.w;
+    res.y = (*this)(1,0)*other.x+ (*this)(1,1)*other.y+ (*this)(1,2)*other.z+(*this)(1,3)*other.w;
+    res.z = (*this)(2,0)*other.x+ (*this)(2,1)*other.y+ (*this)(2,2)*other.z+(*this)(2,3)*other.w;
+    res.w = (*this)(3,0)*other.x+ (*this)(3,1)*other.y+ (*this)(3,2)*other.z+(*this)(3,3)*other.w;
+    return res;
+}
+
 Matrix4f Matrix4f::operator*(float scalar) const
 {
     Matrix4f result;
@@ -96,16 +107,71 @@ float & Matrix4f::operator()(int index)
     return data[index];
 }
 
-float Matrix4f::at(int index) const
+Matrix4f Matrix4f::Identity()
 {
-    return data[index];
+    {
+        return
+     {
+         1,0,0,0,
+         0,1,0,0,
+         0,0,1,0,
+         0,0,0,1
+        };
+    }
 }
 
-///
-/// @param x 第m行
-/// @param y 第n列
-/// @return 第m行第n列的数字
-float Matrix4f::at(int m,int n) const
+Matrix4f Matrix4f::Inverse()
 {
-    return data[(m*4+n)];
+}
+
+
+inline float Matrix4f::determinant3(float a00, float a01, float a02, float a10, float a11, float a12,
+    float a20, float a21, float a22)
+{
+    return a00*(a11*a22-a12*a21)
+    -a01*(a10*a22-a12*a20)
+    +a02*(a10*a21-a11*a20);
+}
+
+float Matrix4f::determinant() const
+{
+    float s0 = data[10] * data[15] - data[11] * data[14];
+    float s1 = data[9]  * data[15] - data[11] * data[13];
+    float s2 = data[9]  * data[14] - data[10] * data[13];
+    float s3 = data[8]  * data[15] - data[11] * data[12];
+    float s4 = data[8]  * data[14] - data[10] * data[12];
+    float s5 = data[8]  * data[13] - data[9]  * data[12];
+
+    float c0 = data[5] * s0 - data[6] * s1 + data[7] * s2;
+    float c1 = data[4] * s0 - data[6] * s3 + data[7] * s4;
+    float c2 = data[4] * s1 - data[5] * s3 + data[7] * s5;
+    float c3 = data[4] * s2 - data[5] * s4 + data[6] * s5;
+    return data[0] * c0 - data[1] * c1 + data[2] * c2 - data[3] * c3;
+}
+
+void Matrix4f::transpose()
+{
+    Matrix4f copy{*this};
+    for (int i{0};i<4;++i)
+    {
+        for (int j{0};j<4;++j)
+        {
+            (*this)(i,j)=copy(j,i);
+        }
+    }
+}
+Matrix4f Matrix4f::transposed() const
+{
+    Matrix4f res;
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            res(i, j) = (*this)(j, i);
+    return res;
+}
+
+
+Matrix4f& Matrix4f::transpose(Matrix4f& mat)
+{
+    mat.transpose();
+    return mat;
 }
