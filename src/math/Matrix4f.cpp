@@ -1,4 +1,8 @@
 #include "Matrix4f.h"
+
+#include <cmath>
+#include <math.h>
+
 Matrix4f  Matrix4f::operator+(const Matrix4f& other) const
 {
      Matrix4f result;
@@ -173,5 +177,18 @@ Matrix4f Matrix4f::transposed() const
 Matrix4f& Matrix4f::transpose(Matrix4f& mat)
 {
     mat.transpose();
+    return mat;
+}
+
+Matrix4f Matrix4f::rotateX(float radians)
+{
+    float cosTheta = cos(radians);
+    float sinTheta = sin(radians);
+    Matrix4f mat = {
+        1, 0, 0, 0,
+        0, cosTheta, -sinTheta, 0,
+        0, sinTheta, cosTheta, 0,
+        0, 0, 0, 1
+    };
     return mat;
 }

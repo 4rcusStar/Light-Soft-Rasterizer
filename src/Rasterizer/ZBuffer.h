@@ -12,12 +12,11 @@ class ZBuffer
 private:
     size_t _width, _height;
     std::pmr::vector<float> _data;
-    const float _maxDepth{1000.f};
+    const float _maxDepth{1.f};
 public:
     ZBuffer(size_t width, size_t height);
     void clear();
     float& operator()(int x,int y);
-
 };
 
 

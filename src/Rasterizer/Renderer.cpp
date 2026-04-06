@@ -10,7 +10,7 @@
 #include "../math/MathUtils.h"
 void Renderer::setModelMatrix()
 {
-    _modelMatrix=Matrix4f::Identity();
+    _modelMatrix=Matrix4f::rotateX(3.14159265358979323846/2);
 }
 
 Matrix4f Renderer::getMvp() const
@@ -21,29 +21,34 @@ Matrix4f Renderer::getMvp() const
 
 void Renderer::vertexShader()
 {
-    for (auto&tri:_triangles)
+    //渲染obj
+    for (auto&obj:_objects)
     {
-        for (int i{0};i<3;++i)
+        for (auto&tri:obj.triangles)
         {
-            Vertex& v{tri[i]};
-            v.clipPosition=getMvp()*Vector4f{v.position,1};
-            float clipW{v.clipPosition.w};
-            v.ndcPosition = {v.clipPosition.x/clipW,v.clipPosition.y/clipW,v.clipPosition.z/clipW};
-            v.screenPosition = {(v.ndcPosition.x+1)*.5f*width,(v.ndcPosition.y+1)*.5f*height};
-            v.depth = -v.clipPosition.z;
+            for (int i{0};i<3;++i)
+            {
+                Vertex& v{tri[i]};
+                v.clipPosition=getMvp()*Vector4f{v.position,1};
+                float clipW{v.clipPosition.w};
+                v.ndcPosition = {v.clipPosition.x/clipW,v.clipPosition.y/clipW,v.clipPosition.z/clipW};
+                v.screenPosition = {(v.ndcPosition.x+1)*.5f*width,(v.ndcPosition.y+1)*.5f*height};
+                v.depth = std::clamp((v.ndcPosition.z+1.f)*.5f,0.f,1.f);//归一化深度
+            }
         }
     }
 }
 
-void Renderer::addTriangle(const Triangle& tri)
+
+
+void Renderer::addObject(const Object &obj)
 {
-    _triangles.push_back(tri);
+    _objects.push_back(obj);
 }
 
-void Renderer::draw()
+void Renderer::draw(const std::string name)
 {
-    //没有alpha通道
-    std::ofstream ofs("out.ppm",std::ios::binary);
+    std::ofstream ofs(name,std::ios::binary);
     ofs <<"P6\n"<<_framebuffer.getWidth()<<" "<<_framebuffer.getHeight()<<"\n255\n";
     for (size_t y = 0; y<_framebuffer.getHeight();++y)
     {
@@ -65,42 +70,61 @@ void Renderer::nextFrame()
     //清除缓存数据
     _zBuffer.clear();
     _framebuffer.clear();
+    setModelMatrix();
     vertexShader();
-    //外层遍历三角形
-    for (auto& tri : _triangles)
-    {
-        //获取AABB
-        std::array boundingBox{tri.getBoundingBox()};
-        int minY{static_cast<int>(boundingBox[1])};
-        int minX{static_cast<int>(boundingBox[0])};
-        int maxX{static_cast<int>(boundingBox[2])};
-        int maxY{static_cast<int>(boundingBox[3])};
-        for (int y = std::max(minY,0); y<=std::min(maxY,static_cast<int>(height-1));++y)
+
+        //遍历obj
+        for (auto& obj:_objects)
         {
-            for (int x = std::max(minX,0); x<=std::min(maxX,static_cast<int>(width-1));++x)
+            //遍历obj的所有三角形
+            for (auto& objTri : obj.triangles)
             {
-                if (tri.isInside(.5f+x,y+.5f))
+                //获取AABB
+                std::array objBoundingBox{objTri.getBoundingBox()};
+                int min_y{static_cast<int>(objBoundingBox[1])};
+                int min_x{static_cast<int>(objBoundingBox[0])};
+                int max_x{static_cast<int>(objBoundingBox[2])};
+                int max_y{static_cast<int>(objBoundingBox[3])};
+                for (int y = std::max(min_y,0); y<=std::min(max_y,static_cast<int>(height-1));++y)
                 {
-                    Vertex& v1 = tri.v1;
-                    Vertex& v2 = tri.v2;
-                    Vertex& v3 = tri.v3;
-                    auto [alpha,beta,gamma]= tri.getBarycentric(x+.5f,y+.5f);
-                    //重心插值
-                    constexpr float eps{std::numeric_limits<float>::epsilon()};
-                    float inverseDepth{alpha/std::max(v1.depth,eps)+beta/std::max(v2.depth,eps)+gamma/std::max(v3.depth,eps)};
-                    float depth{1.f/std::max(inverseDepth,eps)};
-                    if (depth>_zBuffer(x,y))
-                        continue;
-                    _zBuffer(x,y)=depth;
-                    //颜色插值
-                    std::byte* pixel {_framebuffer.pixel(x,y)};
-                    Vector3f col{v1.color*alpha+v2.color*beta+v3.color*gamma};
-                    pixel[0]=static_cast<std::byte>(std::round(col.x));
-                    pixel[1]=static_cast<std::byte>(std::round(col.y));
-                    pixel[2]=static_cast<std::byte>(std::round(col.z));
+                    for (int x = std::max(min_x,0); x<=std::min(max_x,static_cast<int>(width-1));++x)
+                    {
+                        if (objTri.isInside(.5f+x,y+.5f))
+                        {
+                            Vertex& v1 = objTri.v1;
+                            Vertex& v2 = objTri.v2;
+                            Vertex& v3 = objTri.v3;
+                            auto [alpha,beta,gamma]= objTri.getBarycentric(x+.5f,y+.5f);
+                            //重心插值
+                            constexpr float eps{std::numeric_limits<float>::epsilon()};
+                            float inverseDepth{alpha/std::max(v1.depth,eps)+beta/std::max(v2.depth,eps)+gamma/std::max(v3.depth,eps)};
+                            float depth{1.f/std::max(inverseDepth,eps)};
+                            if (depth>_zBuffer(x,y))
+                                continue;
+                            _zBuffer(x,y)=depth;
+                            //颜色插值
+                            std::byte* pixel {_framebuffer.pixel(x,y)};
+                            /*Vector3f col{v1.color*alpha+v2.color*beta+v3.color*gamma};
+                            pixel[0]=static_cast<std::byte>(std::round(col.x));
+                            pixel[1]=static_cast<std::byte>(std::round(col.y));
+                            pixel[2]=static_cast<std::byte>(std::round(col.z));*/
+
+
+                            // 深度图输出（替换颜色）
+                            float z = depth;
+                            depth*=13;
+                            depth = 1.0f - depth;
+
+                            // 转灰度色
+                            uint8_t c = static_cast<uint8_t>(depth * 255);
+                            pixel[0] = static_cast<std::byte>(c);
+                            pixel[1] = static_cast<std::byte>(c);
+                            pixel[2] = static_cast<std::byte>(c);
+
+                        }
+                    }
                 }
             }
         }
-    }
 }
 
