@@ -192,3 +192,27 @@ Matrix4f Matrix4f::rotateX(float radians)
     };
     return mat;
 }
+Matrix4f Matrix4f::rotateY(float radians)
+{
+    float cosTheta = cos(radians);
+    float sinTheta = sin(radians);
+    Matrix4f mat = {
+        cosTheta,  0,  sinTheta,  0,
+        0,         1,  0,         0,
+       -sinTheta,  0,  cosTheta,  0,
+        0,         0,  0,         1
+    };
+    return mat;
+}
+Matrix4f Matrix4f::rotateZ(float radians)
+{
+    float c = cos(radians);
+    float s = sin(radians);
+    return {
+        c,-s, 0, 0,
+        s, c, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    };
+}
+

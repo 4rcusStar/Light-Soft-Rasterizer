@@ -35,7 +35,7 @@ Matrix4f Camera::getProjectionMatrix() const
     return {
         1/(t*aspectRatio),0,0,0,
         0,1/t,0,0,
-        0,0,zFar/(zFar-zNear),zNear*zFar/(zFar-zNear),
+        0,0,-zFar/(zFar-zNear),-zNear*zFar/(zFar-zNear),
         0,0,-1,0
     };
 }

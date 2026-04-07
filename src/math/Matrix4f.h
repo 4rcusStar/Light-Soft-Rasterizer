@@ -48,6 +48,8 @@ public:
     [[nodiscard]]Matrix4f transposed() const;
     static Matrix4f& transpose(Matrix4f& mat);
     static Matrix4f rotateX(float radians);
+    static Matrix4f rotateY(float radians);
+    static Matrix4f rotateZ(float radians);
 };
 inline Matrix4f operator*(const float scalar,const Matrix4f& mat)
 {

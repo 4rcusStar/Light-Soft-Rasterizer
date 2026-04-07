@@ -8,17 +8,18 @@
 
 int main()
 {
-    FrameBuffer frameBuffer{1080,720};
-    ZBuffer zBuffer{1080,720};
+    FrameBuffer frameBuffer{1920,1080};
+    ZBuffer zBuffer{1920,1080};
     Camera camera;
-    camera.position={0,-.2,.8};
+    camera.position={0,-.24f,.8};
     camera.fov = 3.1415926/4;
     Renderer renderer(frameBuffer,zBuffer,camera);
     Object obj;
     obj.worldPosition={0,0,0};
     std::cout<<obj.loadObj("../src/Model/marble_bust_01_1k.obj",1);
     renderer.addObject(obj);
+    renderer.addLight(Light());
     renderer.nextFrame();
     std::cout<<"success!"<<std::endl;
-    renderer.draw("DepthImage.ppm");
+    renderer.draw("Head_BlinnPhong.ppm");
 }
