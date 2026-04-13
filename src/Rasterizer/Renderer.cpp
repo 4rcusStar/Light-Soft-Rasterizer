@@ -99,17 +99,6 @@ void Renderer::fragmentShading()
                             }
                             col*=255;
 
-                            /* 深度图输出
-                            float z = depth;
-                            depth*=13;
-                            depth = 1.0f - depth;
-
-                            // 转灰度色
-                            uint8_t c = static_cast<uint8_t>(depth * 255);
-                            pixel[0] = static_cast<std::byte>(c);
-                            pixel[1] = static_cast<std::byte>(c);
-                            pixel[2] = static_cast<std::byte>(c);
-                            */
                             //输出颜色：
                             auto pixel{_framebuffer.pixel(x,y)};
                             pixel[0]=std::byte{static_cast<std::byte>(col.x)};
@@ -160,6 +149,5 @@ void Renderer::nextFrame()
     setModelMatrix();
     vertexShading();
     fragmentShading();
-
 }
 
